@@ -1,0 +1,26 @@
+<h3> My Profile </h3>
+<p>Email: <%=current_user.email %></p>
+
+<h3>Your Friends</h3>
+<ul>
+  <% for friendship in current_user.friendships %>
+  <li class="friend_info">
+    <%= h friendship.friend.email %>
+    
+    <div class="button">
+    <%#= link_to "View Profile", "#{friendship_path}?id=#{friendship.friend.id}" %>
+        <%#= link_to "View Profile", "#{/show_user_profile/:id =>friendship.friend.id}" %>
+        <%= link_to "View Profile", "show_user_profile/#{friendship.friend.id}" %>
+    </div>
+    <div class="button">
+        <%= link_to "remove", "delete/#{friendship.friend.id}" %>
+    </div>
+  </li>
+  <% end %>  
+</ul>
+
+<div class="find_friend">
+<div class="button">
+  <%= link_to "Find Friends", get_all_user_details_path %>
+</div>
+</div>

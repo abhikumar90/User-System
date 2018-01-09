@@ -1,0 +1,1102 @@
+PG::UndefinedTable: ERROR:  relation "users" does not exist
+LINE 5:                WHERE a.attrelid = '"users"'::regclass
+                                          ^
+:               SELECT a.attname, format_type(a.atttypid, a.atttypmod),
+                     pg_get_expr(d.adbin, d.adrelid), a.attnotnull, a.atttypid, a.atttypmod
+                FROM pg_attribute a LEFT JOIN pg_attrdef d
+                  ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+               WHERE a.attrelid = '"users"'::regclass
+                 AND a.attnum > 0 AND NOT a.attisdropped
+               ORDER BY a.attnum
+
+  [1m[36m (617.6ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL) [0m
+  [1m[35m (36.3ms)[0m  CREATE UNIQUE INDEX  "unique_schema_migrations" ON "schema_migrations"  ("version")
+  [1m[36mActiveRecord::SchemaMigration Load (0.3ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Migrating to CreateUsers (20150920085613)
+  [1m[35m (14.9ms)[0m  BEGIN
+  [1m[36m (151.4ms)[0m  [1mCREATE TABLE "users" ("id" serial primary key, "first_name" character varying, "last_name" character varying, "email" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL) [0m
+  [1m[35mSQL (13.8ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20150920085613"]]
+  [1m[36m (0.8ms)[0m  [1mCOMMIT[0m
+Migrating to AddDeviseToUsers (20150920085645)
+  [1m[35m (0.4ms)[0m  BEGIN
+  [1m[36m (166.2ms)[0m  [1mALTER TABLE "users" ADD "encrypted_password" character varying DEFAULT '' NOT NULL[0m
+  [1m[35m (13.4ms)[0m  ALTER TABLE "users" ADD "reset_password_token" character varying
+  [1m[36m (0.3ms)[0m  [1mALTER TABLE "users" ADD "reset_password_sent_at" timestamp[0m
+  [1m[35m (0.2ms)[0m  ALTER TABLE "users" ADD "remember_created_at" timestamp
+  [1m[36m (4.0ms)[0m  [1mALTER TABLE "users" ADD "sign_in_count" integer DEFAULT 0 NOT NULL[0m
+  [1m[35m (0.3ms)[0m  ALTER TABLE "users" ADD "current_sign_in_at" timestamp
+  [1m[36m (0.2ms)[0m  [1mALTER TABLE "users" ADD "last_sign_in_at" timestamp[0m
+  [1m[35m (0.3ms)[0m  ALTER TABLE "users" ADD "current_sign_in_ip" inet
+  [1m[36m (0.2ms)[0m  [1mALTER TABLE "users" ADD "last_sign_in_ip" inet[0m
+  [1m[35m (1.2ms)[0m  CREATE UNIQUE INDEX  "index_users_on_email" ON "users"  ("email")
+  [1m[36m (1.4ms)[0m  [1mCREATE UNIQUE INDEX  "index_users_on_reset_password_token" ON "users"  ("reset_password_token")[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20150920085645"]]
+  [1m[36m (1.4ms)[0m  [1mCOMMIT[0m
+Migrating to CreatePinProperties (20150920095403)
+  [1m[35m (0.3ms)[0m  BEGIN
+DEPRECATION WARNING: `#timestamp` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /Users/abhishek/Desktop/Pinboard/db/migrate/20150920095403_create_pin_properties.rb:9)
+  [1m[36m (4.3ms)[0m  [1mCREATE TABLE "pin_properties" ("id" serial primary key, "name" character varying, "description" text, "picture" character varying, "user_id" integer, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20150920095403"]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+Migrating to CreateFriendships (20150920125347)
+  [1m[35m (16.1ms)[0m  BEGIN
+  [1m[36m (17.3ms)[0m  [1mCREATE TABLE "friendships" ("id" serial primary key, "user_id" integer, "friend_id" integer, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL) [0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20150920125347"]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+Migrating to AddStatusToUsers (20150920144042)
+  [1m[35m (15.9ms)[0m  BEGIN
+  [1m[36m (0.3ms)[0m  [1mALTER TABLE "users" ADD "status" boolean[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20150920144042"]]
+  [1m[36m (15.0ms)[0m  [1mCOMMIT[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.3ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36m (13.4ms)[0m  [1mSELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'friendships'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+[0m
+  [1m[35m (2.3ms)[0m  SELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'pin_properties'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+
+  [1m[36m (1.9ms)[0m  [1mSELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'users'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+[0m
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mUser Exists (33.3ms)[0m  SELECT  1 AS one FROM "users" WHERE "users"."email" = 'admin@bitlasoft.com' LIMIT 1
+  [1m[36mSQL (13.3ms)[0m  [1mINSERT INTO "users" ("email", "encrypted_password", "first_name", "last_name", "status", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING "id"[0m  [["email", "admin@bitlasoft.com"], ["encrypted_password", "$2a$10$iiJSDzlk7klIYf59DQk4i.5C7nsNdJmQtwOYWfz56KMe0B/YDAETi"], ["first_name", "Admin"], ["last_name", "bitlasoft"], ["status", "t"], ["created_at", "2018-01-09 15:55:13.253001"], ["updated_at", "2018-01-09 15:55:13.253001"]]
+  [1m[35m (30.6ms)[0m  COMMIT
+
+
+Started GET "/" for ::1 at 2018-01-09 21:26:07 +0530
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 21:26:07 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 99ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-09 21:26:08 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (3.0ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (91.2ms)
+Completed 200 OK in 7728ms (Views: 7697.9ms | ActiveRecord: 3.2ms)
+
+
+Started GET "/assets/friendships.self-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css?body=1" for ::1 at 2018-01-09 21:26:16 +0530
+
+
+Started GET "/assets/pinboards.self-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css?body=1" for ::1 at 2018-01-09 21:26:16 +0530
+
+
+Started GET "/assets/scaffolds.self-d4fd5e74509fa2b516b14a0592acd03aa1496f56f1943eda72049a43e019cf72.css?body=1" for ::1 at 2018-01-09 21:26:17 +0530
+
+
+Started GET "/assets/application.self-ed1631fbcfb74eaa8d646afb6b432030745866827ed21e9e7f128e8d5ad4214b.css?body=1" for ::1 at 2018-01-09 21:26:17 +0530
+
+
+Started GET "/assets/jquery.self-a714331225dda820228db323939889f149aec0127aeb06255646b616ba1ca419.js?body=1" for ::1 at 2018-01-09 21:26:17 +0530
+
+
+Started GET "/assets/jquery_ujs.self-d456baa54c1fa6be2ec3711f0a72ddf7a5b2f34a6b4f515f33767d6207b7d4b3.js?body=1" for ::1 at 2018-01-09 21:26:17 +0530
+
+
+Started GET "/assets/turbolinks.self-c37727e9bd6b2735da5c311aa83fead54ed0be6cc8bd9a65309e9c5abe2cbfff.js?body=1" for ::1 at 2018-01-09 21:26:17 +0530
+
+
+Started GET "/assets/friendships.self-877aef30ae1b040ab8a3aba4e3e309a11d7f2612f44dde450b5c157aa5f95c05.js?body=1" for ::1 at 2018-01-09 21:26:17 +0530
+
+
+Started GET "/assets/pinboards.self-877aef30ae1b040ab8a3aba4e3e309a11d7f2612f44dde450b5c157aa5f95c05.js?body=1" for ::1 at 2018-01-09 21:26:17 +0530
+
+
+Started GET "/assets/application.self-3b8dabdc891efe46b9a144b400ad69e37d7e5876bdc39dee783419a69d7ca819.js?body=1" for ::1 at 2018-01-09 21:26:17 +0530
+
+
+Started POST "/users/sign_in" for ::1 at 2018-01-09 21:26:57 +0530
+Processing by Devise::SessionsController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"Md9eOwS7xmEh1r7OFNAkq3RJHCGgv3nfXDkm0Ssd1tONqEhEA4vk6iD6pnCxxTqOAT3hUCBXb3zzsw0vu7Anww==", "user"=>{"email"=>"admin@bitlasoft.com", "password"=>"[FILTERED]", "remember_me"=>"1"}, "commit"=>"Log in"}
+  [1m[35mUser Load (32.1ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."email" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["email", "admin@bitlasoft.com"]]
+  [1m[36m (0.8ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.5ms)[0m  UPDATE "users" SET "remember_created_at" = $1, "updated_at" = $2 WHERE "users"."id" = $3  [["remember_created_at", "2018-01-09 15:56:57.659299"], ["updated_at", "2018-01-09 15:56:57.661400"], ["id", 1]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mSQL (28.4ms)[0m  [1mUPDATE "users" SET "last_sign_in_at" = $1, "current_sign_in_at" = $2, "last_sign_in_ip" = $3, "current_sign_in_ip" = $4, "sign_in_count" = $5, "updated_at" = $6 WHERE "users"."id" = $7[0m  [["last_sign_in_at", "2018-01-09 15:56:57.736073"], ["current_sign_in_at", "2018-01-09 15:56:57.736073"], ["last_sign_in_ip", "::1/128"], ["current_sign_in_ip", "::1/128"], ["sign_in_count", 1], ["updated_at", "2018-01-09 15:56:57.738431"], ["id", 1]]
+  [1m[35m (0.6ms)[0m  COMMIT
+Redirected to http://localhost:3000/pinboards
+Completed 302 Found in 466ms (ActiveRecord: 63.5ms)
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 21:26:57 +0530
+Processing by PinboardsController#index as HTML
+  [1m[36mUser Load (0.8ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  [1m[35mPinProperty Load (93.0ms)[0m  SELECT "pin_properties".* FROM "pin_properties" WHERE "pin_properties"."user_id" = $1  [["user_id", 1]]
+  Rendered pinboards/index.html.erb within layouts/application (209.0ms)
+Completed 200 OK in 882ms (Views: 507.4ms | ActiveRecord: 94.7ms)
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 21:27:20 +0530
+Processing by PinboardsController#index as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  [1m[35mPinProperty Load (0.4ms)[0m  SELECT "pin_properties".* FROM "pin_properties" WHERE "pin_properties"."user_id" = $1  [["user_id", 1]]
+  Rendered pinboards/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 162ms (Views: 158.3ms | ActiveRecord: 0.9ms)
+
+
+Started GET "/pinboards/new" for ::1 at 2018-01-09 21:27:22 +0530
+Processing by PinboardsController#new as HTML
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  Rendered pinboards/_form.html.erb (47.8ms)
+  Rendered pinboards/new.html.erb within layouts/application (53.4ms)
+Completed 200 OK in 132ms (Views: 122.1ms | ActiveRecord: 1.5ms)
+
+
+Started GET "/get_all_user_details" for ::1 at 2018-01-09 21:27:24 +0530
+Processing by PinboardsController#get_all_user_details as HTML
+  [1m[35mUser Load (0.5ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1[0m  [["email", "admin@bitlasoft.com"]]
+  [1m[35mCACHE (0.0ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1  [["email", "admin@bitlasoft.com"]]
+  [1m[36mUser Load (0.5ms)[0m  [1mSELECT "users".* FROM "users"[0m
+  Rendered pinboards/users_list.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 114ms (Views: 106.3ms | ActiveRecord: 1.4ms)
+
+
+Started GET "/block_users" for ::1 at 2018-01-09 21:27:27 +0530
+Processing by PinboardsController#block_users as HTML
+  [1m[35mUser Load (0.7ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1[0m  [["email", "admin@bitlasoft.com"]]
+  [1m[35mUser Load (0.3ms)[0m  SELECT "users".* FROM "users"
+  Rendered pinboards/block_users.html.erb within layouts/application (0.8ms)
+Completed 200 OK in 65ms (Views: 60.5ms | ActiveRecord: 1.4ms)
+
+
+Started GET "/view_my_profile" for ::1 at 2018-01-09 21:27:29 +0530
+Processing by PinboardsController#view_my_profile as HTML
+  [1m[36mUser Load (0.5ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  [1m[35mFriendship Load (23.5ms)[0m  SELECT "friendships".* FROM "friendships" WHERE "friendships"."user_id" = $1  [["user_id", 1]]
+  Rendered pinboards/view_my_profile.html.erb within layouts/application (34.7ms)
+Completed 200 OK in 120ms (Views: 91.8ms | ActiveRecord: 25.1ms)
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 21:27:33 +0530
+Processing by PinboardsController#index as HTML
+  [1m[36mUser Load (0.3ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  [1m[35mPinProperty Load (0.4ms)[0m  SELECT "pin_properties".* FROM "pin_properties" WHERE "pin_properties"."user_id" = $1  [["user_id", 1]]
+  Rendered pinboards/index.html.erb within layouts/application (2.0ms)
+Completed 200 OK in 91ms (Views: 86.1ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/pinboards/new" for ::1 at 2018-01-09 21:27:34 +0530
+Processing by PinboardsController#new as HTML
+  [1m[36mUser Load (0.3ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  Rendered pinboards/_form.html.erb (1.4ms)
+  Rendered pinboards/new.html.erb within layouts/application (3.7ms)
+Completed 200 OK in 78ms (Views: 75.7ms | ActiveRecord: 0.3ms)
+
+
+Started POST "/pinboards/new" for ::1 at 2018-01-09 21:27:59 +0530
+Processing by PinboardsController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"rrHC1DUjYQjTjQJrj/BSk8AGBisfqMOjPcHYkKnNmASbcFW/LBi/8lBDavIYCvqPv+PwWhp9HPF+UzeM2TQoAA==", "pinboard"=>{"name"=>"New File", "description"=>"Test Data", "picture"=>#<ActionDispatch::Http::UploadedFile:0x007fb132b15dd8 @tempfile=#<Tempfile:/var/folders/9n/nzy53nn516n76ld_02t2mhrh0000gn/T/RackMultipart20180109-50489-13dr0fs.png>, @original_filename="1.png", @content_type="image/png", @headers="Content-Disposition: form-data; name=\"pinboard[picture]\"; filename=\"1.png\"\r\nContent-Type: image/png\r\n">}, "commit"=>"Save Pinboard"}
+  [1m[35mUser Load (0.3ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (23.7ms)[0m  INSERT INTO "pin_properties" ("name", "description", "picture", "user_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["name", "New File"], ["description", "Test Data"], ["picture", "1.png"], ["user_id", 1], ["created_at", "2018-01-09 15:58:00.065391"], ["updated_at", "2018-01-09 15:58:00.065391"]]
+  [1m[36m (70.4ms)[0m  [1mCOMMIT[0m
+Redirected to http://localhost:3000/pinboards
+Completed 302 Found in 205ms (ActiveRecord: 94.6ms)
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 21:28:00 +0530
+Processing by PinboardsController#index as HTML
+  [1m[35mUser Load (0.3ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mPinProperty Load (0.4ms)[0m  [1mSELECT "pin_properties".* FROM "pin_properties" WHERE "pin_properties"."user_id" = $1[0m  [["user_id", 1]]
+  Rendered pinboards/index.html.erb within layouts/application (3.2ms)
+Completed 200 OK in 128ms (Views: 125.5ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for ::1 at 2018-01-09 21:29:28 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 21:29:28 +0530
+Processing by PinboardsController#index as HTML
+  [1m[35mUser Load (0.5ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mPinProperty Load (0.4ms)[0m  [1mSELECT "pin_properties".* FROM "pin_properties" WHERE "pin_properties"."user_id" = $1[0m  [["user_id", 1]]
+  Rendered pinboards/index.html.erb within layouts/application (4.2ms)
+Completed 200 OK in 253ms (Views: 247.5ms | ActiveRecord: 0.9ms)
+
+
+Started GET "/block_users" for ::1 at 2018-01-09 21:29:33 +0530
+Processing by PinboardsController#block_users as HTML
+  [1m[35mUser Load (0.3ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1[0m  [["email", "admin@bitlasoft.com"]]
+  [1m[35mUser Load (0.4ms)[0m  SELECT "users".* FROM "users"
+  Rendered pinboards/block_users.html.erb within layouts/application (0.1ms)
+Completed 200 OK in 94ms (Views: 89.0ms | ActiveRecord: 1.1ms)
+
+
+Started GET "/get_all_user_details" for ::1 at 2018-01-09 21:29:36 +0530
+Processing by PinboardsController#get_all_user_details as HTML
+  [1m[36mUser Load (0.3ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  [1m[35mUser Load (0.3ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1  [["email", "admin@bitlasoft.com"]]
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1[0m  [["email", "admin@bitlasoft.com"]]
+  [1m[35mUser Load (0.4ms)[0m  SELECT "users".* FROM "users"
+  Rendered pinboards/users_list.html.erb within layouts/application (0.1ms)
+Completed 200 OK in 99ms (Views: 93.9ms | ActiveRecord: 1.0ms)
+
+
+Started GET "/view_my_profile" for ::1 at 2018-01-09 21:29:41 +0530
+Processing by PinboardsController#view_my_profile as HTML
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  [1m[35mFriendship Load (3.3ms)[0m  SELECT "friendships".* FROM "friendships" WHERE "friendships"."user_id" = $1  [["user_id", 1]]
+  Rendered pinboards/view_my_profile.html.erb within layouts/application (6.4ms)
+Completed 200 OK in 125ms (Views: 118.5ms | ActiveRecord: 3.7ms)
+
+
+Started GET "/get_all_user_details" for ::1 at 2018-01-09 21:29:42 +0530
+Processing by PinboardsController#get_all_user_details as HTML
+  [1m[36mUser Load (0.3ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  [1m[35mUser Load (0.5ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1  [["email", "admin@bitlasoft.com"]]
+  [1m[36mCACHE (0.0ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1[0m  [["email", "admin@bitlasoft.com"]]
+  [1m[35mUser Load (0.3ms)[0m  SELECT "users".* FROM "users"
+  Rendered pinboards/users_list.html.erb within layouts/application (0.1ms)
+Completed 200 OK in 111ms (Views: 105.9ms | ActiveRecord: 1.1ms)
+
+
+Started GET "/pinboards/new" for ::1 at 2018-01-09 21:29:47 +0530
+Processing by PinboardsController#new as HTML
+  [1m[36mUser Load (0.3ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  Rendered pinboards/_form.html.erb (2.2ms)
+  Rendered pinboards/new.html.erb within layouts/application (5.2ms)
+Completed 200 OK in 94ms (Views: 91.8ms | ActiveRecord: 0.3ms)
+
+
+Started GET "/view_my_profile" for ::1 at 2018-01-09 21:47:28 +0530
+Processing by PinboardsController#view_my_profile as HTML
+  [1m[35mUser Load (0.7ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mFriendship Load (0.5ms)[0m  [1mSELECT "friendships".* FROM "friendships" WHERE "friendships"."user_id" = $1[0m  [["user_id", 1]]
+  Rendered pinboards/view_my_profile.html.erb within layouts/application (6.9ms)
+Completed 200 OK in 230ms (Views: 205.1ms | ActiveRecord: 1.2ms)
+
+
+Started DELETE "/users/sign_out" for ::1 at 2018-01-09 21:47:33 +0530
+Processing by Devise::SessionsController#destroy as HTML
+  Parameters: {"authenticity_token"=>"RP6v+6aCL6yHl5fFB4JEmruOovqeGXzo1caNQUYBkyFxPziQv7nxVgRZ/1yQeOyGxGtUi5vMo7qWVGJdNvgjJQ=="}
+  [1m[35mUser Load (0.4ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36m (0.3ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.5ms)[0m  UPDATE "users" SET "remember_created_at" = $1, "updated_at" = $2 WHERE "users"."id" = $3  [["remember_created_at", nil], ["updated_at", "2018-01-09 16:17:33.897327"], ["id", 1]]
+  [1m[36m (118.3ms)[0m  [1mCOMMIT[0m
+Redirected to http://localhost:3000/
+Completed 302 Found in 308ms (ActiveRecord: 119.4ms)
+
+
+Started GET "/" for ::1 at 2018-01-09 21:47:34 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 21:47:34 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 2ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-09 21:47:34 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (1.0ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (59.6ms)
+Completed 200 OK in 214ms (Views: 211.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-09 23:07:57 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (2.1ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (20.9ms)
+Completed 200 OK in 342ms (Views: 324.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for ::1 at 2018-01-09 23:08:00 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 23:08:00 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 2ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-09 23:08:00 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (5.4ms)
+Completed 200 OK in 81ms (Views: 79.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for ::1 at 2018-01-09 23:09:12 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 23:09:12 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 1ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-09 23:09:12 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (7.8ms)
+Completed 200 OK in 98ms (Views: 96.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for ::1 at 2018-01-09 23:09:35 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 23:09:35 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 1ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-09 23:09:35 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (0.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (7.5ms)
+Completed 200 OK in 211ms (Views: 208.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for ::1 at 2018-01-09 23:09:40 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 23:09:40 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 1ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-09 23:09:40 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (0.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (6.2ms)
+Completed 200 OK in 67ms (Views: 66.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for ::1 at 2018-01-09 23:09:42 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 23:09:42 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 1ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-09 23:09:42 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (7.6ms)
+Completed 200 OK in 69ms (Views: 67.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for ::1 at 2018-01-09 23:09:49 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 23:09:49 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 1ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-09 23:09:49 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (1.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (10.1ms)
+Completed 200 OK in 104ms (Views: 102.3ms | ActiveRecord: 0.0ms)
+
+
+Started POST "/users/sign_in" for ::1 at 2018-01-09 23:13:51 +0530
+Processing by Devise::SessionsController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"2alD5z6Z6WIEa9dI6vfuDxyCJWOx9vAmNoZsLvfF0XBVOY0A6+XGZhBGLg65B4nglXgDvixIZbPC78q6mgeLbQ==", "user"=>{"email"=>"admin@bitlasoft.com", "password"=>"[FILTERED]", "remember_me"=>"0"}, "commit"=>"Log in"}
+  [1m[35mUser Load (1.5ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."email" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["email", "admin@bitlasoft.com"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.5ms)[0m  UPDATE "users" SET "current_sign_in_at" = $1, "sign_in_count" = $2, "updated_at" = $3 WHERE "users"."id" = $4  [["current_sign_in_at", "2018-01-09 17:43:51.432992"], ["sign_in_count", 2], ["updated_at", "2018-01-09 17:43:51.436712"], ["id", 1]]
+  [1m[36m (16.7ms)[0m  [1mCOMMIT[0m
+Redirected to http://localhost:3000/pinboards
+Completed 302 Found in 113ms (ActiveRecord: 19.0ms)
+
+
+Started GET "/pinboards" for ::1 at 2018-01-09 23:13:51 +0530
+Processing by PinboardsController#index as HTML
+  [1m[35mUser Load (0.4ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mPinProperty Load (0.4ms)[0m  [1mSELECT "pin_properties".* FROM "pin_properties" WHERE "pin_properties"."user_id" = $1[0m  [["user_id", 1]]
+  Rendered pinboards/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 134ms (Views: 130.8ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/view_my_profile" for ::1 at 2018-01-09 23:14:32 +0530
+Processing by PinboardsController#view_my_profile as HTML
+  [1m[35mUser Load (0.3ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mFriendship Load (0.5ms)[0m  [1mSELECT "friendships".* FROM "friendships" WHERE "friendships"."user_id" = $1[0m  [["user_id", 1]]
+  Rendered pinboards/view_my_profile.html.erb within layouts/application (2.3ms)
+Completed 200 OK in 139ms (Views: 136.2ms | ActiveRecord: 0.8ms)
+
+
+Started DELETE "/users/sign_out" for ::1 at 2018-01-10 00:15:03 +0530
+Processing by Devise::SessionsController#destroy as HTML
+  Parameters: {"authenticity_token"=>"0xfS7O1S/rYuDENnPw94wdQ/6zhd8QoWUL5XHHirtFMHC4fDob6kpUqceRsvh10AxQD+Kok5qqPRoXDztc7/Dw=="}
+  [1m[35mUser Load (0.8ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.2ms)[0m  COMMIT
+Redirected to http://localhost:3000/
+Completed 302 Found in 35ms (ActiveRecord: 1.3ms)
+
+
+Started GET "/" for ::1 at 2018-01-10 00:15:03 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-10 00:15:03 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 2ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-10 00:15:03 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (1.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (33.4ms)
+Completed 200 OK in 333ms (Views: 329.8ms | ActiveRecord: 0.0ms)
+
+
+Started POST "/users/sign_in" for ::1 at 2018-01-10 00:15:25 +0530
+Processing by Devise::SessionsController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"7FaHrEVW2bgH8RAEAAnY95Ngfe549dHxkligNEzPyjS42dXVzeSw5a6oFVr7nJ5C4rV/lPmucnSpEY+K/uPaZw==", "user"=>{"email"=>"admin@bitlasoft.com", "password"=>"[FILTERED]", "remember_me"=>"0"}, "commit"=>"Log in"}
+  [1m[36mUser Load (0.8ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."email" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["email", "admin@bitlasoft.com"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mSQL (0.5ms)[0m  [1mUPDATE "users" SET "last_sign_in_at" = $1, "current_sign_in_at" = $2, "sign_in_count" = $3, "updated_at" = $4 WHERE "users"."id" = $5[0m  [["last_sign_in_at", "2018-01-09 17:43:51.432992"], ["current_sign_in_at", "2018-01-09 18:45:25.230853"], ["sign_in_count", 3], ["updated_at", "2018-01-09 18:45:25.233775"], ["id", 1]]
+  [1m[35m (30.4ms)[0m  COMMIT
+Redirected to http://localhost:3000/pinboards
+Completed 302 Found in 131ms (ActiveRecord: 31.9ms)
+
+
+Started GET "/pinboards" for ::1 at 2018-01-10 00:15:25 +0530
+Processing by PinboardsController#index as HTML
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  [1m[35mPinProperty Load (0.4ms)[0m  SELECT "pin_properties".* FROM "pin_properties" WHERE "pin_properties"."user_id" = $1  [["user_id", 1]]
+  Rendered pinboards/index.html.erb within layouts/application (5.9ms)
+Completed 200 OK in 175ms (Views: 168.9ms | ActiveRecord: 0.7ms)
+
+
+Started DELETE "/users/sign_out" for ::1 at 2018-01-10 00:15:28 +0530
+Processing by Devise::SessionsController#destroy as HTML
+  Parameters: {"authenticity_token"=>"9gEJDNW41GMVasQKTh/zlpcaSaESkIa9SDZjN9p/AZ7BwZGLPitt+ho6SJHiLaLRmK7sQLQPJ/Zem5ndIoxq2Q=="}
+  [1m[36mUser Load (0.3ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+Redirected to http://localhost:3000/
+Completed 302 Found in 9ms (ActiveRecord: 0.6ms)
+
+
+Started GET "/" for ::1 at 2018-01-10 00:15:28 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-10 00:15:28 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 1ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-10 00:15:28 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (1.0ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (11.6ms)
+Completed 200 OK in 248ms (Views: 245.9ms | ActiveRecord: 0.0ms)
+
+
+Started POST "/users/sign_in" for ::1 at 2018-01-10 00:33:43 +0530
+Processing by Devise::SessionsController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"pp3cq6AOC/Xy9Yt/u8dFPth2i4ivLTauxpmgfDvKz+T2WpmvvO4GuC53wkVzH3xDyHEozV1ZzpVqvV8DvdYYSw==", "user"=>{"email"=>"admin@bitlasoft.com", "password"=>"[FILTERED]", "remember_me"=>"0"}, "commit"=>"Log in"}
+  [1m[35mUser Load (1.2ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."email" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["email", "admin@bitlasoft.com"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.5ms)[0m  UPDATE "users" SET "last_sign_in_at" = $1, "current_sign_in_at" = $2, "sign_in_count" = $3, "updated_at" = $4 WHERE "users"."id" = $5  [["last_sign_in_at", "2018-01-09 18:45:25.230853"], ["current_sign_in_at", "2018-01-09 19:03:43.730383"], ["sign_in_count", 4], ["updated_at", "2018-01-09 19:03:43.736933"], ["id", 1]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+Redirected to http://localhost:3000/pinboards
+Completed 302 Found in 127ms (ActiveRecord: 2.6ms)
+
+
+Started GET "/pinboards" for ::1 at 2018-01-10 00:33:43 +0530
+Processing by PinboardsController#index as HTML
+  [1m[35mUser Load (0.4ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mPinProperty Load (0.3ms)[0m  [1mSELECT "pin_properties".* FROM "pin_properties" WHERE "pin_properties"."user_id" = $1[0m  [["user_id", 1]]
+  Rendered pinboards/index.html.erb within layouts/application (7.4ms)
+Completed 200 OK in 270ms (Views: 263.6ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/get_all_user_details" for ::1 at 2018-01-10 00:43:14 +0530
+Processing by PinboardsController#get_all_user_details as HTML
+  [1m[35mUser Load (0.3ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1[0m  [["email", "admin@bitlasoft.com"]]
+  [1m[35mCACHE (0.0ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1  [["email", "admin@bitlasoft.com"]]
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT "users".* FROM "users"[0m
+  Rendered pinboards/users_list.html.erb within layouts/application (0.1ms)
+Completed 200 OK in 229ms (Views: 222.9ms | ActiveRecord: 1.1ms)
+
+
+Started GET "/block_users" for ::1 at 2018-01-10 00:43:15 +0530
+Processing by PinboardsController#block_users as HTML
+  [1m[35mUser Load (0.3ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36mUser Load (0.2ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."email" = $1 LIMIT 1[0m  [["email", "admin@bitlasoft.com"]]
+  [1m[35mUser Load (0.3ms)[0m  SELECT "users".* FROM "users"
+  Rendered pinboards/block_users.html.erb within layouts/application (0.1ms)
+Completed 200 OK in 108ms (Views: 103.2ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/pinboards/new" for ::1 at 2018-01-10 00:43:17 +0530
+Processing by PinboardsController#new as HTML
+  [1m[36mUser Load (0.3ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  Rendered pinboards/_form.html.erb (6.7ms)
+  Rendered pinboards/new.html.erb within layouts/application (10.7ms)
+Completed 200 OK in 212ms (Views: 207.4ms | ActiveRecord: 0.3ms)
+
+
+Started DELETE "/users/sign_out" for ::1 at 2018-01-10 00:43:22 +0530
+Processing by Devise::SessionsController#destroy as HTML
+  Parameters: {"authenticity_token"=>"9R84WCGLYZvGm4HyeIoBdpVlRHVm/VEmPnTZns3B9FLn8xVnITasq6YUJm/lc50p6d0qGxcTBItxgOLUQy7cVA=="}
+  [1m[35mUser Load (0.3ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.2ms)[0m  COMMIT
+Redirected to http://localhost:3000/
+Completed 302 Found in 9ms (ActiveRecord: 0.8ms)
+
+
+Started GET "/" for ::1 at 2018-01-10 00:43:22 +0530
+
+
+Started GET "/pinboards" for ::1 at 2018-01-10 00:43:22 +0530
+Processing by PinboardsController#index as HTML
+Completed 401 Unauthorized in 1ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-10 00:43:22 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (1.9ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.2/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (31.4ms)
+Completed 200 OK in 131ms (Views: 128.4ms | ActiveRecord: 0.0ms)
+  [1m[36mActiveRecord::SchemaMigration Load (0.6ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Migrating to CreateUsers (20150920085613)
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (184.2ms)[0m  [1mCREATE TABLE "users" ("id" serial primary key, "first_name" character varying, "last_name" character varying, "email" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL) [0m
+PG::DuplicateTable: ERROR:  relation "users" already exists
+: CREATE TABLE "users" ("id" serial primary key, "first_name" character varying, "last_name" character varying, "email" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL) 
+  [1m[35m (0.2ms)[0m  ROLLBACK
+  [1m[36mUser Load (1.0ms)[0m  [1mSELECT  "users".* FROM "users"  ORDER BY "users"."id" DESC LIMIT 1[0m
+  [1m[35m (321.1ms)[0m  DROP TABLE "users"
+  [1m[36mActiveRecord::SchemaMigration Load (0.6ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Migrating to CreateUsers (20150920085613)
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (52.6ms)[0m  [1mCREATE TABLE "users" ("id" serial primary key, "first_name" character varying, "last_name" character varying, "email" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL) [0m
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20150920085613"]]
+  [1m[36m (15.9ms)[0m  [1mCOMMIT[0m
+Migrating to AddDeviseToUsers (20150920085645)
+  [1m[35m (16.5ms)[0m  BEGIN
+  [1m[36m (24.5ms)[0m  [1mALTER TABLE "users" ADD "encrypted_password" character varying DEFAULT '' NOT NULL[0m
+  [1m[35m (0.3ms)[0m  ALTER TABLE "users" ADD "reset_password_token" character varying
+  [1m[36m (0.2ms)[0m  [1mALTER TABLE "users" ADD "reset_password_sent_at" timestamp[0m
+  [1m[35m (0.3ms)[0m  ALTER TABLE "users" ADD "remember_created_at" timestamp
+  [1m[36m (4.0ms)[0m  [1mALTER TABLE "users" ADD "sign_in_count" integer DEFAULT 0 NOT NULL[0m
+  [1m[35m (0.3ms)[0m  ALTER TABLE "users" ADD "current_sign_in_at" timestamp
+  [1m[36m (0.2ms)[0m  [1mALTER TABLE "users" ADD "last_sign_in_at" timestamp[0m
+  [1m[35m (0.2ms)[0m  ALTER TABLE "users" ADD "current_sign_in_ip" inet
+  [1m[36m (0.2ms)[0m  [1mALTER TABLE "users" ADD "last_sign_in_ip" inet[0m
+  [1m[35m (14.6ms)[0m  CREATE UNIQUE INDEX  "index_users_on_email" ON "users"  ("email")
+  [1m[36m (1.2ms)[0m  [1mCREATE UNIQUE INDEX  "index_users_on_reset_password_token" ON "users"  ("reset_password_token")[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20150920085645"]]
+  [1m[36m (1.3ms)[0m  [1mCOMMIT[0m
+Migrating to CreatePinProperties (20150920095403)
+  [1m[35m (0.3ms)[0m  BEGIN
+DEPRECATION WARNING: `#timestamp` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /Users/abhishek/Desktop/User-System/user_app/db/migrate/20150920095403_create_pin_properties.rb:9)
+  [1m[36m (34.5ms)[0m  [1mCREATE TABLE "pin_properties" ("id" serial primary key, "name" character varying, "description" text, "picture" character varying, "user_id" integer, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20150920095403"]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+Migrating to CreateFriendships (20150920125347)
+  [1m[35m (15.5ms)[0m  BEGIN
+  [1m[36m (23.2ms)[0m  [1mCREATE TABLE "friendships" ("id" serial primary key, "user_id" integer, "friend_id" integer, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL) [0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20150920125347"]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+Migrating to AddStatusToUsers (20150920144042)
+  [1m[35m (16.4ms)[0m  BEGIN
+  [1m[36m (0.4ms)[0m  [1mALTER TABLE "users" ADD "status" boolean[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20150920144042"]]
+  [1m[36m (15.3ms)[0m  [1mCOMMIT[0m
+Migrating to CreateBanks (20180109192954)
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (3.4ms)[0m  [1mCREATE TABLE "banks" ("id" serial primary key, "name" character varying, "branch" character varying, "amount" integer, "email" character varying, "phone" character varying, "created_at" timestamp NOT NULL, "updated_at" timestamp NOT NULL) [0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20180109192954"]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.5ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36m (2.4ms)[0m  [1mSELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'banks'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+[0m
+  [1m[35m (2.0ms)[0m  SELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'friendships'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+
+  [1m[36m (1.7ms)[0m  [1mSELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'pin_properties'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+[0m
+  [1m[35m (1.7ms)[0m  SELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'users'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+
+
+
+Started GET "/users/login" for ::1 at 2018-01-10 01:04:13 +0530
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+
+ActionController::RoutingError (No route matches [GET] "/users/login"):
+  actionpack (4.2.1) lib/action_dispatch/middleware/debug_exceptions.rb:21:in `call'
+  web-console (2.2.1) lib/web_console/middleware.rb:39:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.1) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.1) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.1) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.1) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.1) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.1) lib/rails/rack/logger.rb:20:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.4) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.4) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.1) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.4) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/static.rb:113:in `call'
+  rack (1.6.4) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.1) lib/rails/engine.rb:518:in `call'
+  railties (4.2.1) lib/rails/application.rb:164:in `call'
+  rack (1.6.4) lib/rack/lock.rb:17:in `call'
+  rack (1.6.4) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.4) lib/rack/handler/webrick.rb:88:in `service'
+  /Users/abhishek/.rvm/rubies/ruby-2.2.0/lib/ruby/2.2.0/webrick/httpserver.rb:138:in `service'
+  /Users/abhishek/.rvm/rubies/ruby-2.2.0/lib/ruby/2.2.0/webrick/httpserver.rb:94:in `run'
+  /Users/abhishek/.rvm/rubies/ruby-2.2.0/lib/ruby/2.2.0/webrick/server.rb:294:in `block in start_thread'
+
+
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/routes/_route.html.erb (2.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/routes/_table.html.erb (87.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (15.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/routing_error.html.erb within rescues/layout (197.3ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (106.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (187.2ms)
+
+
+Started GET "/" for ::1 at 2018-01-10 01:04:16 +0530
+
+
+Started GET "/banks" for ::1 at 2018-01-10 01:04:16 +0530
+
+ActionController::RoutingError (Couldn't find BanksHelper, expected it to be defined in helpers/banks_helper.rb):
+  app/controllers/application_controller.rb:1:in `<top (required)>'
+  app/controllers/banks_controller.rb:1:in `<top (required)>'
+
+
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (6.9ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/routes/_route.html.erb (4.7ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/routes/_table.html.erb (2.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (4.3ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/routing_error.html.erb within rescues/layout (137.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.3ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (59.8ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (137.4ms)
+
+
+Started GET "/banks" for ::1 at 2018-01-10 01:04:21 +0530
+
+ActionController::RoutingError (Couldn't find BanksHelper, expected it to be defined in helpers/banks_helper.rb):
+  app/controllers/application_controller.rb:1:in `<top (required)>'
+  app/controllers/banks_controller.rb:1:in `<top (required)>'
+
+
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (3.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/routes/_route.html.erb (3.7ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/routes/_table.html.erb (1.3ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (2.0ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/routing_error.html.erb within rescues/layout (116.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (1.0ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.3ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (53.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (122.9ms)
+
+
+Started GET "/banks" for ::1 at 2018-01-10 01:04:55 +0530
+
+LoadError (Unable to autoload constant BanksController, expected /Users/abhishek/Desktop/User-System/user_app/app/controllers/banks_controller.rb to define it):
+  activesupport (4.2.1) lib/active_support/dependencies.rb:495:in `load_missing_constant'
+  activesupport (4.2.1) lib/active_support/dependencies.rb:184:in `const_missing'
+  activesupport (4.2.1) lib/active_support/inflector/methods.rb:261:in `const_get'
+  activesupport (4.2.1) lib/active_support/inflector/methods.rb:261:in `block in constantize'
+  activesupport (4.2.1) lib/active_support/inflector/methods.rb:259:in `each'
+  activesupport (4.2.1) lib/active_support/inflector/methods.rb:259:in `inject'
+  activesupport (4.2.1) lib/active_support/inflector/methods.rb:259:in `constantize'
+  activesupport (4.2.1) lib/active_support/dependencies.rb:566:in `get'
+  activesupport (4.2.1) lib/active_support/dependencies.rb:597:in `constantize'
+  actionpack (4.2.1) lib/action_dispatch/routing/route_set.rb:70:in `controller_reference'
+  actionpack (4.2.1) lib/action_dispatch/routing/route_set.rb:60:in `controller'
+  actionpack (4.2.1) lib/action_dispatch/routing/route_set.rb:39:in `serve'
+  actionpack (4.2.1) lib/action_dispatch/journey/router.rb:43:in `block in serve'
+  actionpack (4.2.1) lib/action_dispatch/journey/router.rb:30:in `each'
+  actionpack (4.2.1) lib/action_dispatch/journey/router.rb:30:in `serve'
+  actionpack (4.2.1) lib/action_dispatch/routing/route_set.rb:819:in `call'
+  warden (1.2.3) lib/warden/manager.rb:35:in `block in call'
+  warden (1.2.3) lib/warden/manager.rb:34:in `catch'
+  warden (1.2.3) lib/warden/manager.rb:34:in `call'
+  rack (1.6.4) lib/rack/etag.rb:24:in `call'
+  rack (1.6.4) lib/rack/conditionalget.rb:25:in `call'
+  rack (1.6.4) lib/rack/head.rb:13:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/params_parser.rb:27:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/flash.rb:260:in `call'
+  rack (1.6.4) lib/rack/session/abstract/id.rb:225:in `context'
+  rack (1.6.4) lib/rack/session/abstract/id.rb:220:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/cookies.rb:560:in `call'
+  activerecord (4.2.1) lib/active_record/query_cache.rb:36:in `call'
+  activerecord (4.2.1) lib/active_record/connection_adapters/abstract/connection_pool.rb:649:in `call'
+  activerecord (4.2.1) lib/active_record/migration.rb:378:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.1) lib/active_support/callbacks.rb:88:in `call'
+  activesupport (4.2.1) lib/active_support/callbacks.rb:88:in `_run_callbacks'
+  activesupport (4.2.1) lib/active_support/callbacks.rb:776:in `_run_call_callbacks'
+  activesupport (4.2.1) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.1) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  web-console (2.2.1) lib/web_console/middleware.rb:39:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.1) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.1) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.1) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.1) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.1) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.1) lib/rails/rack/logger.rb:20:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.4) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.4) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.1) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.4) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/static.rb:113:in `call'
+  rack (1.6.4) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.1) lib/rails/engine.rb:518:in `call'
+  railties (4.2.1) lib/rails/application.rb:164:in `call'
+  rack (1.6.4) lib/rack/lock.rb:17:in `call'
+  rack (1.6.4) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.4) lib/rack/handler/webrick.rb:88:in `service'
+  /Users/abhishek/.rvm/rubies/ruby-2.2.0/lib/ruby/2.2.0/webrick/httpserver.rb:138:in `service'
+  /Users/abhishek/.rvm/rubies/ruby-2.2.0/lib/ruby/2.2.0/webrick/httpserver.rb:94:in `run'
+  /Users/abhishek/.rvm/rubies/ruby-2.2.0/lib/ruby/2.2.0/webrick/server.rb:294:in `block in start_thread'
+
+
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (6.1ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (67.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.3ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.3ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (51.1ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (115.5ms)
+
+
+Started GET "/" for ::1 at 2018-01-10 01:07:04 +0530
+  [1m[36mActiveRecord::SchemaMigration Load (0.6ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+
+
+Started GET "/banks" for ::1 at 2018-01-10 01:07:04 +0530
+Processing by BanksController#index as HTML
+Completed 401 Unauthorized in 38ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-10 01:07:05 +0530
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (2.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (71.7ms)
+Completed 500 Internal Server Error in 2774ms (ActiveRecord: 19.3ms)
+
+ActionView::Template::Error (undefined local variable or method `new_pinboard_path' for #<#<Class:0x007ff0f34c5d10>:0x007ff0f34c4bb8>):
+    24:     <div class="collapse navbar-collapse">
+    25:       <ul class="nav navbar-nav">
+    26:         <li><a href="/pinboards">Pinboard</a></li>
+    27:         <li ><%= link_to 'New Pinboard', new_pinboard_path %></li>
+    28:         <li ><%= link_to 'Add Friend', get_all_user_details_path %></li>
+    29:         <% if current_user and current_user.email == "admin@bitlasoft.com" %>
+    30:           <li ><%= link_to 'User List', block_users_path %></li>
+  app/views/layouts/application.html.erb:27:in `_app_views_layouts_application_html_erb__2940240206697341581_70336430762700'
+
+
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (12.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (3.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.0ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (87.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (70.9ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (139.8ms)
+
+
+Started GET "/users/sign_in" for ::1 at 2018-01-10 01:09:45 +0530
+  [1m[36mActiveRecord::SchemaMigration Load (0.7ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Processing by Devise::SessionsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (2.3ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/devise-3.5.2/app/views/devise/sessions/new.html.erb within layouts/application (49.2ms)
+Completed 200 OK in 553ms (Views: 511.7ms | ActiveRecord: 4.0ms)
+
+
+Started GET "/assets/application.self-ed1631fbcfb74eaa8d646afb6b432030745866827ed21e9e7f128e8d5ad4214b.css?body=1" for ::1 at 2018-01-10 01:09:46 +0530
+
+
+Started GET "/assets/pinboards.self-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css?body=1" for ::1 at 2018-01-10 01:09:46 +0530
+
+
+Started GET "/assets/scaffolds.self-97b4b220d981592e66ffb247c48089c18e680e306afe3732d8378ea393206fe8.css?body=1" for ::1 at 2018-01-10 01:09:46 +0530
+
+
+Started GET "/assets/jquery.self-a714331225dda820228db323939889f149aec0127aeb06255646b616ba1ca419.js?body=1" for ::1 at 2018-01-10 01:09:46 +0530
+
+
+Started GET "/assets/turbolinks.self-c37727e9bd6b2735da5c311aa83fead54ed0be6cc8bd9a65309e9c5abe2cbfff.js?body=1" for ::1 at 2018-01-10 01:09:46 +0530
+
+
+Started GET "/assets/jquery_ujs.self-d456baa54c1fa6be2ec3711f0a72ddf7a5b2f34a6b4f515f33767d6207b7d4b3.js?body=1" for ::1 at 2018-01-10 01:09:46 +0530
+
+
+Started GET "/assets/friendships.self-877aef30ae1b040ab8a3aba4e3e309a11d7f2612f44dde450b5c157aa5f95c05.js?body=1" for ::1 at 2018-01-10 01:09:46 +0530
+
+
+Started GET "/assets/pinboards.self-877aef30ae1b040ab8a3aba4e3e309a11d7f2612f44dde450b5c157aa5f95c05.js?body=1" for ::1 at 2018-01-10 01:09:46 +0530
+
+
+Started GET "/assets/friendships.self-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css?body=1" for ::1 at 2018-01-10 01:09:46 +0530
+
+
+Started GET "/users/sign_up" for ::1 at 2018-01-10 01:10:47 +0530
+Processing by Devise::RegistrationsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/devise-3.5.2/app/views/devise/registrations/new.html.erb within layouts/application (6.3ms)
+Completed 200 OK in 182ms (Views: 180.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/users/sign_up" for ::1 at 2018-01-10 01:10:48 +0530
+Processing by Devise::RegistrationsController#new as HTML
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (0.7ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/devise-3.5.2/app/views/devise/registrations/new.html.erb within layouts/application (8.3ms)
+Completed 200 OK in 95ms (Views: 92.9ms | ActiveRecord: 0.0ms)
+
+
+Started POST "/users" for ::1 at 2018-01-10 01:11:03 +0530
+Processing by Devise::RegistrationsController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"qyY30/pHRbM12Y8G9C8SGkdyNWbjOgeorbzICG6tCNVzydZxT4gQFa4V7yTjYxNC9pXJzmvijC+S1L1KSGtkMQ==", "user"=>{"email"=>"abc@aa.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]"}, "commit"=>"Sign up"}
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mUser Exists (18.0ms)[0m  [1mSELECT  1 AS one FROM "users" WHERE "users"."email" = 'abc@aa.com' LIMIT 1[0m
+  [1m[35m (2.6ms)[0m  ROLLBACK
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/devise-3.5.2/app/views/devise/shared/_links.html.erb (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/devise-3.5.2/app/views/devise/registrations/new.html.erb within layouts/application (8.9ms)
+Completed 200 OK in 590ms (Views: 124.3ms | ActiveRecord: 20.8ms)
+
+
+Started POST "/users" for ::1 at 2018-01-10 01:11:27 +0530
+Processing by Devise::RegistrationsController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"FBDYp545S6IJj7SL5HMLL3ThiUQWk8IebFCbeuZcD4bM/zkFK/YeBJJD1KnzPwp3xQZ17J5LSZlTOO44wJpjYg==", "user"=>{"email"=>"abc@aa.com", "password"=>"[FILTERED]", "password_confirmation"=>"[FILTERED]"}, "commit"=>"Sign up"}
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mUser Exists (0.4ms)[0m  SELECT  1 AS one FROM "users" WHERE "users"."email" = 'abc@aa.com' LIMIT 1
+  [1m[36mSQL (32.6ms)[0m  [1mINSERT INTO "users" ("email", "encrypted_password", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"[0m  [["email", "abc@aa.com"], ["encrypted_password", "$2a$10$M6uoENoh4op.v/n1aRVCpuhzf00E3k3tCqVo9IebH5gGHbn5iNIxu"], ["created_at", "2018-01-09 19:41:27.352681"], ["updated_at", "2018-01-09 19:41:27.352681"]]
+  [1m[35m (23.2ms)[0m  COMMIT
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (24.5ms)[0m  UPDATE "users" SET "last_sign_in_at" = $1, "current_sign_in_at" = $2, "last_sign_in_ip" = $3, "current_sign_in_ip" = $4, "sign_in_count" = $5, "updated_at" = $6 WHERE "users"."id" = $7  [["last_sign_in_at", "2018-01-09 19:41:27.411285"], ["current_sign_in_at", "2018-01-09 19:41:27.411285"], ["last_sign_in_ip", "::1/128"], ["current_sign_in_ip", "::1/128"], ["sign_in_count", 1], ["updated_at", "2018-01-09 19:41:27.412787"], ["id", 1]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+Redirected to http://localhost:3001/banks
+Completed 302 Found in 205ms (ActiveRecord: 81.9ms)
+
+
+Started GET "/banks" for ::1 at 2018-01-10 01:11:27 +0530
+Processing by BanksController#index as HTML
+  [1m[35mUser Load (0.5ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+Completed 500 Internal Server Error in 6ms (ActiveRecord: 0.5ms)
+
+NoMethodError (undefined method `pin_properties' for #<User:0x007f9a894efb30>):
+  app/controllers/banks_controller.rb:6:in `index'
+
+
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (7.7ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.8ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (71.1ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.7ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (77.8ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.7ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (163.4ms)
+
+
+Started GET "/banks" for ::1 at 2018-01-10 01:13:58 +0530
+  [1m[36mActiveRecord::SchemaMigration Load (0.6ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Processing by BanksController#index as HTML
+  [1m[35mUser Load (0.9ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  Rendered banks/index.html.erb within layouts/application (2.6ms)
+Completed 500 Internal Server Error in 1145ms (ActiveRecord: 5.5ms)
+
+ActionView::Template::Error (undefined method `gravatar_url' for #<User:0x007ffcd51f2028>):
+    33:       <p class="navbar-text pull-right">
+    34:         <% if user_signed_in? %>
+    35:             Logged in as
+    36:             <%= image_tag current_user.gravatar_url, class: 'height-16-px' %>
+    37:             <strong><%= current_user.email %></strong>.
+    38:             <%= link_to 'View Profile', view_my_profile_path, :class => 'navbar-link' %> |
+    39:             <%= link_to "Logout", destroy_user_session_path, method: :delete, :class => 'navbar-link'  %>
+  app/views/layouts/application.html.erb:36:in `_app_views_layouts_application_html_erb___2435302646625094373_70361941824540'
+
+
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (14.2ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (7.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (2.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (80.6ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.7ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (1.1ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (87.8ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (1.2ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (233.0ms)
+
+
+Started GET "/banks" for ::1 at 2018-01-10 01:14:32 +0530
+Processing by BanksController#index as HTML
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  Rendered banks/index.html.erb within layouts/application (0.1ms)
+Completed 200 OK in 173ms (Views: 169.9ms | ActiveRecord: 0.4ms)
+
+
+Started GET "/view_my_profile" for ::1 at 2018-01-10 01:14:38 +0530
+Processing by BanksController#view_my_profile as HTML
+  [1m[35mUser Load (0.5ms)[0m  SELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1  [["id", 1]]
+  Rendered banks/view_my_profile.html.erb within layouts/application (7.2ms)
+Completed 500 Internal Server Error in 50ms (ActiveRecord: 0.5ms)
+
+ActionView::Template::Error (undefined method `friendships' for #<User:0x007ffcd564eb30>):
+    3: 
+    4: <h3>Your Friends</h3>
+    5: <ul>
+    6:   <% for friendship in current_user.friendships %>
+    7:   <li class="friend_info">
+    8:     <%= h friendship.friend.email %>
+    9:     
+  app/views/banks/view_my_profile.html.erb:6:in `_app_views_banks_view_my_profile_html_erb__2736446160586892619_70361944319180'
+
+
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (9.0ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (3.0ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.2ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (68.1ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (52.8ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (126.4ms)
+
+
+Started GET "/view_my_profile" for ::1 at 2018-01-10 01:14:39 +0530
+Processing by BanksController#view_my_profile as HTML
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT  "users".* FROM "users" WHERE "users"."id" = $1  ORDER BY "users"."id" ASC LIMIT 1[0m  [["id", 1]]
+  Rendered banks/view_my_profile.html.erb within layouts/application (4.7ms)
+Completed 500 Internal Server Error in 15ms (ActiveRecord: 0.4ms)
+
+ActionView::Template::Error (undefined method `friendships' for #<User:0x007ffcd700ba28>):
+    3: 
+    4: <h3>Your Friends</h3>
+    5: <ul>
+    6:   <% for friendship in current_user.friendships %>
+    7:   <li class="friend_info">
+    8:     <%= h friendship.friend.email %>
+    9:     
+  app/views/banks/view_my_profile.html.erb:6:in `_app_views_banks_view_my_profile_html_erb__2736446160586892619_70361957798860'
+
+
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (8.1ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (3.3ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.3ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (64.2ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.7ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (51.0ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.5ms)
+  Rendered /Users/abhishek/.rvm/gems/ruby-2.2.0@rails4/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (112.2ms)

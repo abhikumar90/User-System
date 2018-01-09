@@ -1,0 +1,24 @@
+#Demo: https://vast-dusk-7615.herokuapp.com
+
+#install devise 
+
+##rails g model PinProperty name:string description:text picture:string user_id:integer
+
+#rails generate model Friendship user_id:integer friend_id:integer
+
+#rails generate controller Friendships
+
+#rails generate migration AddStatusToUsers status:boolean
+
+#rake db:migrate
+
+#rake db:seed
+
+===============================
+
+# In "seeds.rb" file i have created "Admin" User and some dummy user.[run command===> rake db:seed]
+
+# For picture upload i am using "carrierwave" gem.
+
+# For User-Friend Relation i am creating one model name==> "Friendships".
+

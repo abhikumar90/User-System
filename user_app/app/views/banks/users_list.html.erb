@@ -1,0 +1,28 @@
+<h3>Friend Lists</h3>
+
+<table border=4>
+  <thead>
+  <tr>
+    <th></th>
+    <th></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @users.each do |user| %>
+      <tr>
+           <td><%= user.email %></td>        
+          <td>
+            <%# if user.friends.present?%>
+             <!--<p>Already assigned</p>-->
+            <%#else%>
+            <%= link_to "Add Friend", friendships_path(:friend_id => user), :method => :post %>
+            <%#end%>
+          </td>
+
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+<br>

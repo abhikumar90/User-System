@@ -1,0 +1,71 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+body { padding-top: 60px; }
+footer { margin-top: 100px; }
+/*table, td, th { vertical-align: middle; border: none; }
+th { border-bottom: 1px solid #DDD; }*/
+
+.foo-width {
+    min-width: 50%;
+}
+
+.margin-top {
+    margin-top: 32px;
+}
+
+.height-16-px {
+    height: 16px;
+}
+table {
+    height: 235px;
+    width: 42%;
+}
+td a {
+	color: red;
+    font-family: initial;
+    font-weight: bold;
+    margin-left: 84px;
+    text-align: inherit;
+}
+table th {
+    width: 153px;
+}
+
+tr td {
+    font-weight: bold;
+}
+.button {background:#6A8B92;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px;display:inline;display:inline-block;margin-left: 22px;}
+.button a {color:#fff;border-radius: 5px 5px 5px 5px;font-family:arial;cursor:pointer;display:inline-block;padding:5px;margin: 1px 3px;font-weight: normal;text-decoration: none;/*height:17px;*/}
+.button a:hover {text-decoration: none !important;background: #94b5bc;}
+
+.container > p {
+    font-size: 17px;
+}
+
+ul li {
+    font-size: 15px;
+}
+
+.find_friend .button {
+    margin: 61px;
+}
+.friend_info {
+    margin-top: 16px;
+}
+p {
+    margin-left: 74px;
+}

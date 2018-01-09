@@ -1,0 +1,23 @@
+<h3>User Details</h3>
+
+<table border=4>
+  <thead>
+  <tr>
+    <th></th>
+    <th></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @users.each do |user| %>
+      <tr>
+           <td><%= user.email %></td>
+
+         <td><%= link_to "Block User", "/change_user_status/#{user.id}" %></td>
+
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+<br>
