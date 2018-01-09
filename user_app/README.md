@@ -1,3 +1,4 @@
-# Pinboard
+rails g devise:install
+rails g devise user
+rake db:migrate
 
-#Demo: https://vast-dusk-7615.herokuapp.com
